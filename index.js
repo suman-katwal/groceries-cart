@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js"
-import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js"
+import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js"
 
 const appSettings = {
     databaseURL: "https://grocery-checklist-c18e7-default-rtdb.asia-southeast1.firebasedatabase.app/"
@@ -14,34 +14,45 @@ const inputEl = document.getElementById('input-el')
 const ulEl = document.getElementById('ul-el')
 
 addItemBtn.addEventListener("click", function () {
-    renderShoppingList(inputEl.value)
-    console.log(inputEl.value + " is added to database")
+    //renderShoppingList(inputEl.value)
+    //console.log(inputEl.value + " is added to database")
+    if(inputEl.value){
     push(groceryListInDB, inputEl.value)
     clearInputField(inputEl)
+    }
 
 })
 
 onValue(groceryListInDB, function (snapshot) {
-    let itemsInDB = Object.values(snapshot.val())
+    let itemsInDB = Object.entries(snapshot.val())
 
     clearRenderedItems()
 
     for (let i = 0; i < itemsInDB.length; i++) {
-        let groceryItemsInDB = itemsInDB[i]
-        renderShoppingList(groceryItemsInDB)
-        // console.log(groceryItemsInDB)
+        let currentItem = itemsInDB[i]
+      
+        let currentItemID = currentItem[0]
+        let currentItemValue = currentItem[1]
 
+        renderShoppingList(currentItem)
     }
 
 
 })
 
-function renderShoppingList(grocery) {
-    if (grocery) {
-        ulEl.innerHTML += `
-        <li>${grocery}</li>
-    `
-    }
+function renderShoppingList(item) {
+       let itemID = item[0]
+       let itemValue = item[1]
+       let newEl = document.createElement("li")
+       newEl.textContent= itemValue
+
+       newEl.addEventListener("click", function(){
+         let exactLocationOfItemInDB = ref(database, 'NnqYFUOVnCaarqtbR6X')
+
+         console.log(exactLocationOfItemInDB)
+        //   remove(exactLocationOfItemInDB)
+       })
+       ulEl.append(newEl)
 }
 
 function clearRenderedItems() {
