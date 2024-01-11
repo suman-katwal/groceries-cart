@@ -24,6 +24,7 @@ addItemBtn.addEventListener("click", function () {
 })
 
 onValue(groceryListInDB, function (snapshot) {
+    if(snapshot.exists()){
     let itemsInDB = Object.entries(snapshot.val())
 
     clearRenderedItems()
@@ -31,26 +32,33 @@ onValue(groceryListInDB, function (snapshot) {
     for (let i = 0; i < itemsInDB.length; i++) {
         let currentItem = itemsInDB[i]
       
-        let currentItemID = currentItem[0]
-        let currentItemValue = currentItem[1]
+        // let currentItemID = currentItem[0]
+        // let currentItemValue = currentItem[1]
 
         renderShoppingList(currentItem)
     }
-
+    }
+    else{
+        ulEl.innerHTML= "No items here....yet"
+    }
 
 })
 
 function renderShoppingList(item) {
        let itemID = item[0]
        let itemValue = item[1]
+
        let newEl = document.createElement("li")
-       newEl.textContent= itemValue
+
+       newEl.textContent = itemValue
 
        newEl.addEventListener("click", function(){
-         let exactLocationOfItemInDB = ref(database, 'NnqYFUOVnCaarqtbR6X')
 
-         console.log(exactLocationOfItemInDB)
-        //   remove(exactLocationOfItemInDB)
+         let exactLocationOfItemInDB = ref(database, `Groceries/${itemID}`)
+        
+         //console.log(exactLocationOfItemInDB)
+        remove(exactLocationOfItemInDB)
+
        })
        ulEl.append(newEl)
 }
